@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asignaciones</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app" class="d-flex flex-column min-vh-100">
+
+    <!-- Header -->
+    <header class="bg-danger text-white text-center py-3">
+      <h1 class="h3"><i class="bi bi-person-circle me-2"></i>Bienvenido al Panel del Estudiante</h1>
+    </header>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Menú</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="panel.html">Panel</a></li>
+            <li class="nav-item"><a class="nav-link" href="asignaturas.html">Asignaturas</a></li>
+            <li class="nav-item"><a class="nav-link active" href="asignaciones.html">Asignaciones</a></li>
+            <li class="nav-item"><a class="nav-link" href="calificaciones.html">Calificaciones</a></li>
+            <li class="nav-item"><a class="nav-link" href="index.html">Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="container py-4 text-center">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando asignaciones...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="container py-4">
+      <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main v-else class="container my-4 flex-grow-1">
+      <!-- Información del estudiante -->
+      <div class="mb-4">
+        <h2 class="text-danger">
+          <i class="bi bi-clipboard-check me-2"></i>
+          Asignaciones - Grado {{ grado }}
+        </h2>
+        <p class="text-muted">Estudiante: {{ nombreUsuario }}</p>
+      </div>
+
+      <div class="row">
+        <!-- Tareas -->
+        <div class="col-md-6 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h4">
+              <i class="bi bi-journal-text text-primary me-2"></i>
+              Tareas Asignadas
+            </h3>
+            <span class="badge bg-primary">{{ tareas.length }}</span>
+          </div>
+
+          <div v-if="tareas.length > 0">
+            <div v-for="tarea in tareas" :key="tarea.id" class="card mb-3 shadow-sm border-0">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <h5 class="card-title text-dark">{{ tarea.titulo }}</h5>
+                    <p class="card-text text-muted mb-2">
+                      <i class="bi bi-book me-1"></i>{{ tarea.materia }}
+                    </p>
+                    <p class="card-text">
+                      <i class="bi bi-calendar-event me-1"></i>
+                      <strong>Entrega:</strong> {{ tarea.fechaEntrega }}
+                    </p>
+                    <small class="text-muted">{{ tarea.descripcion }}</small>
+                  </div>
+                  <span :class="getEstadoClass(tarea.estado)" class="badge ms-2">
+                    {{ tarea.estado }}
+                  </span>
+                </div>
+                <div class="mt-3">
+                  <button class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-eye me-1"></i>Ver detalles
+                  </button>
+                  <button v-if="tarea.estado === 'Pendiente'" class="btn btn-primary btn-sm">
+                    <i class="bi bi-upload me-1"></i>Subir tarea
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="text-center py-4">
+            <i class="bi bi-journal-x text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-2">No hay tareas asignadas</p>
+          </div>
+        </div>
+
+        <!-- Quizzes -->
+        <div class="col-md-6 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h4">
+              <i class="bi bi-question-circle text-success me-2"></i>
+              Quizzes Asignados
+            </h3>
+            <span class="badge bg-success">{{ quizzes.length }}</span>
+          </div>
+
+          <div v-if="quizzes.length > 0">
+            <div v-for="quiz in quizzes" :key="quiz.id" class="card mb-3 shadow-sm border-0">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <h5 class="card-title text-dark">{{ quiz.titulo }}</h5>
+                    <p class="card-text text-muted mb-2">
+                      <i class="bi bi-book me-1"></i>{{ quiz.materia }}
+                    </p>
+                    <p class="card-text">
+                      <i class="bi bi-clock me-1"></i>
+                      <strong>Fecha:</strong> {{ quiz.fechaLimite }}
+                    </p>
+                    <p class="card-text">
+                      <i class="bi bi-stopwatch me-1"></i>
+                      <strong>Duración:</strong> {{ quiz.duracion }} minutos
+                    </p>
+                  </div>
+                  <span :class="getEstadoClass(quiz.estado)" class="badge ms-2">
+                    {{ quiz.estado }}
+                  </span>
+                </div>
+                <div class="mt-3">
+                  <button v-if="quiz.estado === 'Disponible'" class="btn btn-success btn-sm">
+                    <i class="bi bi-play-circle me-1"></i>Presentar quiz
+                  </button>
+                  <button v-else-if="quiz.estado === 'Completado'" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-check-circle me-1"></i>Ver resultados
+                  </button>
+                  <button v-else class="btn btn-secondary btn-sm" disabled>
+                    <i class="bi bi-lock me-1"></i>No disponible
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="text-center py-4">
+            <i class="bi bi-question-circle-fill text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-2">No hay quizzes asignados</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-danger text-white text-center py-3 mt-auto">
+      <p class="mb-0">&copy; 2025 Plataforma Escolar Colombo Holandés. Todos los derechos reservados.</p>
+    </footer>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Vue.js -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <!-- Vue.js App -->
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          loading: true,
+          error: null,
+          usuario: null,
+          grado: "",
+          nombreUsuario: "",
+          tareas: [],
+          quizzes: []
+        };
+      },
+      async mounted() {
+        await this.cargarDatosUsuario();
+        await this.cargarAsignaciones();
+      },
+      methods: {
+        async cargarDatosUsuario() {
+          try {
+            const usuarioData = localStorage.getItem('usuarioLogueado');
+            
+            if (!usuarioData) {
+              this.error = "No hay sesión activa. Redirigiendo al login...";
+              setTimeout(() => {
+                window.location.href = 'index.html';
+              }, 2000);
+              return;
+            }
+
+            this.usuario = JSON.parse(usuarioData);
+            
+            if (this.usuario.rol !== 'estudiante') {
+              this.error = "Usuario no válido para ver asignaciones.";
+              return;
+            }
+
+            this.grado = this.usuario.grado;
+            this.nombreUsuario = this.usuario.usuario;
+
+          } catch (err) {
+            this.error = "Error al cargar la información del usuario.";
+          }
+        },
+
+        async cargarAsignaciones() {
+          try {
+            // Por ahora usamos datos de ejemplo
+            // Más adelante puedes conectar esto con tu base de datos
+            this.tareas = [
+              {
+                id: 1,
+                titulo: "Ejercicios de Matemáticas - Capítulo 5",
+                materia: "Matemáticas",
+                fechaEntrega: "25 de Agosto, 2025",
+                descripcion: "Resolver ejercicios del 1 al 20 de la página 85",
+                estado: "Pendiente"
+              },
+              {
+                id: 2,
+                titulo: "Resumen sobre la Independencia",
+                materia: "Sociales",
+                fechaEntrega: "28 de Agosto, 2025",
+                descripcion: "Elaborar un resumen de 2 páginas sobre la independencia de Colombia",
+                estado: "Entregado"
+              },
+              {
+                id: 3,
+                titulo: "Laboratorio de Ciencias",
+                materia: "Ciencias Naturales",
+                fechaEntrega: "30 de Agosto, 2025",
+                descripcion: "Informe del experimento sobre el ciclo del agua",
+                estado: "Pendiente"
+              }
+            ];
+
+            this.quizzes = [
+              {
+                id: 1,
+                titulo: "Quiz de Verbos en Inglés",
+                materia: "Inglés",
+                fechaLimite: "26 de Agosto, 2025",
+                duracion: 30,
+                estado: "Disponible"
+              },
+              {
+                id: 2,
+                titulo: "Evaluación de Fracciones",
+                materia: "Matemáticas",
+                fechaLimite: "29 de Agosto, 2025",
+                duracion: 45,
+                estado: "No disponible"
+              },
+              {
+                id: 3,
+                titulo: "Quiz de Geografía",
+                materia: "Sociales",
+                fechaLimite: "20 de Agosto, 2025",
+                duracion: 25,
+                estado: "Completado"
+              }
+            ];
+
+            this.loading = false;
+
+          } catch (err) {
+            this.error = "Error al cargar las asignaciones.";
+            this.loading = false;
+          }
+        },
+
+        getEstadoClass(estado) {
+          const clases = {
+            'Pendiente': 'bg-warning text-dark',
+            'Entregado': 'bg-success',
+            'Disponible': 'bg-primary',
+            'Completado': 'bg-info',
+            'No disponible': 'bg-secondary'
+          };
+          return clases[estado] || 'bg-secondary';
+        }
+      }
+    }).mount('#app');
+  </script>
+
+</body>
+</html>
