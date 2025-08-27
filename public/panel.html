@@ -53,113 +53,161 @@
 
         <h1 id="bienvenida"></h1>
 
-
         <!-- Perfil -->
-        <section v-if="!editando"     class="card shadow-sm mb-4">
+        <section v-if="!editando" class="card shadow-sm mb-4">
           <div class="card-body">
             <h2 class="h5 mb-3"><i class="bi bi-person-lines-fill me-2"></i>Mi Perfil</h2>
             <p><strong>Nombre:</strong> {{ nombre }}</p>
-<p><strong>Curso:</strong> {{ curso }}</p>
-<p><strong>Jornada:</strong> {{ jornada }}</p>
-<p><strong>Correo institucional:</strong> {{ correo }}</p>
-<p><strong>Materia:</strong> {{ materia }}</p>
-            
+            <p><strong>Curso:</strong> {{ curso }}</p>
+            <p><strong>Jornada:</strong> {{ jornada }}</p>
+            <p><strong>Correo institucional:</strong> {{ correo }}</p>
+            <p><strong>Materia:</strong> {{ materia }}</p>
           </div>
         </section>
 
-      
-
         <!-- Matricular solo para administradores -->
-         <div  v-if="rol === 'administrador'" class="container py-4">
-    <h1 class="mb-4 text-center">Panel de Administración</h1>
+        <div v-if="rol === 'administrador'" class="container py-4">
+          <h1 class="mb-4 text-center">Panel de Administración</h1>
 
-    <!-- Formulario de matrícula -->
-    <div class="card mb-4">
-      <div class="card-header">
-        <i class="bi bi-person-plus-fill"></i> Matricular Usuario
-      </div>
-      <div class="card-body">
-        <form @submit.prevent="matricularUsuario">
-          <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input v-model="nuevoUsuario.nombre" type="text" class="form-control" required />
+          <!-- Formulario de matrícula -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <i class="bi bi-person-plus-fill"></i> Matricular Usuario
+            </div>
+            <div class="card-body">
+              <form @submit.prevent="matricularUsuario">
+                <div class="mb-3">
+                  <label class="form-label">Nombre</label>
+                  <input v-model="nuevoUsuario.nombre" type="text" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Usuario</label>
+                  <input v-model="nuevoUsuario.usuario" type="text" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Contraseña</label>
+                  <input v-model="nuevoUsuario.clave" type="password" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Correo</label>
+                  <input v-model="nuevoUsuario.correo" type="email" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Rol</label>
+                  <select v-model="nuevoUsuario.rol" class="form-select" required>
+                    <option value="">Seleccione un rol</option>
+                    <option value="estudiante">Estudiante</option>
+                    <option value="docente">Docente</option>
+                  </select>
+                </div>
+
+                <div v-if="nuevoUsuario.rol === 'estudiante'" class="mb-3">
+                  <label class="form-label">Grado</label>
+                  <input v-model="nuevoUsuario.grado" type="text" class="form-control" />
+                </div>
+
+                <div v-if="nuevoUsuario.rol === 'docente'" class="mb-3">
+                  <label class="form-label">Materia</label>
+                  <input v-model="nuevoUsuario.materia" type="text" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                  Matricular
+                </button>
+              </form>
+            </div>
           </div>
 
-          <div class="mb-3">
-  <label class="form-label">Usuario</label>
-  <input v-model="nuevoUsuario.usuario" type="text" class="form-control" required />
-</div>
-
-<div class="mb-3">
-  <label class="form-label">Contraseña</label>
-  <input v-model="nuevoUsuario.clave" type="password" class="form-control" required />
-</div>
-
-
-          <div class="mb-3">
-            <label class="form-label">Correo</label>
-            <input v-model="nuevoUsuario.correo" type="email" class="form-control" required />
+          <!-- Lista de usuarios -->
+          <div class="card">
+            <div class="card-header">
+              <i class="bi bi-people-fill"></i> Lista de Usuarios
+            </div>
+            <div class="card-body p-0">
+              <table class="table table-striped mb-0">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Grado / Materia</th>
+                    <th class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="usuario in listaUsuarios" :key="usuario._id">
+                    <td>{{ usuario.usuario }}</td>
+                    <td>{{ usuario.correo }}</td>
+                    <td>{{ usuario.rol }}</td>
+                    <td>
+                      <span v-if="usuario.rol === 'estudiante'">{{ usuario.grado }}</span>
+                      <span v-if="usuario.rol === 'docente'">{{ usuario.materia }}</span>
+                    </td>
+                    <td class="text-center">
+                      <button @click="editarUsuario(usuario)" class="btn btn-sm btn-outline-primary me-1">
+                        <i class="bi bi-pencil"></i> Editar
+                      </button>
+                      <button @click="eliminarUsuario(usuario._id)" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                  <tr v-if="listaUsuarios.length === 0">
+                    <td colspan="5" class="text-center">No hay usuarios registrados</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label">Rol</label>
-            <select v-model="nuevoUsuario.rol" class="form-select" required>
-              <option value="">Seleccione un rol</option>
-              <option value="estudiante">Estudiante</option>
-              <option value="docente">Docente</option>
-            </select>
+          <!-- Modal para editar usuario -->
+          <div class="modal fade" :class="{ show: mostrarModalEditar }" :style="{ display: mostrarModalEditar ? 'block' : 'none' }" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Editar Usuario</h5>
+                  <button type="button" class="btn-close" @click="cerrarModal"></button>
+                </div>
+                <div class="modal-body" v-if="usuarioEditando">
+                  <form @submit.prevent="guardarEdicion">
+                    <div class="mb-3">
+                      <label class="form-label">Usuario</label>
+                      <input v-model="usuarioEditando.usuario" type="text" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Correo</label>
+                      <input v-model="usuarioEditando.correo" type="email" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Rol</label>
+                      <select v-model="usuarioEditando.rol" class="form-select" required>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="docente">Docente</option>
+                      </select>
+                    </div>
+                    <div v-if="usuarioEditando.rol === 'estudiante'" class="mb-3">
+                      <label class="form-label">Grado</label>
+                      <input v-model="usuarioEditando.grado" type="text" class="form-control" />
+                    </div>
+                    <div v-if="usuarioEditando.rol === 'docente'" class="mb-3">
+                      <label class="form-label">Materia</label>
+                      <input v-model="usuarioEditando.materia" type="text" class="form-control" />
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" @click="cerrarModal">Cancelar</button>
+                  <button type="button" class="btn btn-primary" @click="guardarEdicion">Guardar Cambios</button>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div v-if="nuevoUsuario.rol === 'estudiante'" class="mb-3">
-            <label class="form-label">Grado</label>
-            <input v-model="nuevoUsuario.grado" type="text" class="form-control" />
-          </div>
-
-          <div v-if="nuevoUsuario.rol === 'docente'" class="mb-3">
-            <label class="form-label">Materia</label>
-            <input v-model="nuevoUsuario.materia" type="text" class="form-control" />
-          </div>
-
-          <button type="submit" class="btn btn-primary">
-            Matricular
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Lista de usuarios -->
-    <div class="card">
-      <div class="card-header">
-        <i class="bi bi-people-fill"></i> Lista de Usuarios
-      </div>
-      <div class="card-body p-0">
-        <table class="table table-striped mb-0">
-          <thead class="table-dark">
-            <tr>
-              <th>Nombre</th>
-              <th>Correo</th>
-              <th>Rol</th>
-              <th>Grado / Materia</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="usuario in listaUsuarios" :key="usuario._id">
-              <td>{{ usuario.nombre }}</td>
-              <td>{{ usuario.correo }}</td>
-              <td>{{ usuario.rol }}</td>
-              <td>
-                <span v-if="usuario.rol === 'estudiante'">{{ usuario.grado }}</span>
-                <span v-if="usuario.rol === 'docente'">{{ usuario.materia }}</span>
-              </td>
-            </tr>
-            <tr v-if="listaUsuarios.length === 0">
-              <td colspan="4" class="text-center">No hay usuarios registrados</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+          <div v-if="mostrarModalEditar" class="modal-backdrop fade show"></div>
+        </div>
 
       </div>
     </div>
@@ -173,7 +221,7 @@
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-   <script>
+  <script>
     const usuarioGuardado = localStorage.getItem("usuarioLogueado");
     if (usuarioGuardado) {
       const usuario = JSON.parse(usuarioGuardado);
@@ -187,99 +235,161 @@
     }
   </script>
 
+  <script>
+    const { createApp } = Vue;
 
+    createApp({
+      data() {
+        return {
+          rol: localStorage.getItem("rolUsuario") || "",
+          usuarioActual: localStorage.getItem("usuarioActual") || "",
+          nombre: "",
+          curso: "",
+          jornada: "",
+          correo: "",
+          contrasena: "",
+          editando: false,
+          nuevoUsuario: { usuario: "", clave: "", correo: "", rol: "", grado: "", materia: "" },
+          listaUsuarios: [],
+          usuarioEditando: null,
+          mostrarModalEditar: false
+        };
+      },
 
+      methods: {
+        async cargarPerfil() {
+          try {
+            const res = await fetch(`http://localhost:3000/usuario/${this.usuarioActual}`);
+            if (!res.ok) throw new Error("No se pudo cargar el perfil");
+            const data = await res.json();
 
+            this.nombre = data.nombre || data.usuario;
+            this.correo = data.correo || "";
+            this.curso = data.grado || "";
+            this.jornada = data.rol === "estudiante" ? "Mañana" : "";
+          } catch (err) {
+            console.error(err);
+            alert("Error al cargar tu perfil");
+          }
+        },
 
+        async obtenerUsuarios() {
+          try {
+            const res = await fetch("http://localhost:3000/usuarios");
+            if (!res.ok) throw new Error("Error al obtener usuarios");
+            this.listaUsuarios = await res.json();
+          } catch (err) {
+            console.error(err);
+            alert("No se pudo cargar la lista de usuarios");
+          }
+        },
 
+        async matricularUsuario() {
+          try {
+            const res = await fetch("http://localhost:3000/registrar", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.nuevoUsuario)
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || "Error al registrar usuario");
+            alert(`Usuario ${this.nuevoUsuario.usuario} agregado con rol ${this.nuevoUsuario.rol}`);
+            this.nuevoUsuario = { usuario: "", clave: "", correo: "", rol: "", grado: "", materia: "" };
+            this.obtenerUsuarios();
+          } catch (err) {
+            console.error(err);
+            alert("No se pudo registrar el usuario");
+          }
+        },
 
-<script>
-const { createApp } = Vue;
+        async eliminarUsuario(usuarioId) {
+          if (!confirm("¿Está seguro de que desea eliminar este usuario?")) return;
+          
+          try {
+            const res = await fetch(`http://localhost:3000/usuario/${usuarioId}`, {
+              method: "DELETE"
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+              alert("Usuario eliminado correctamente");
+              this.obtenerUsuarios();
+            } else {
+              alert("Error al eliminar usuario: " + data.message);
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Error al eliminar usuario");
+          }
+        },
 
-createApp({
-  data() {
-  return {
-    rol: localStorage.getItem("rolUsuario") || "",
-    usuarioActual: localStorage.getItem("usuarioActual") || "",
-    nombre: "",
-    curso: "",
-    jornada: "",
-    correo: "",
-    contrasena: "",
-    editando: false,
-    nuevoUsuario: { usuario: "", clave: "", correo: "", rol: "", grado: "", materia: "" },
-    listaUsuarios: []
-  };
+        editarUsuario(usuario) {
+          this.usuarioEditando = { ...usuario }; // Copia del usuario
+          this.mostrarModalEditar = true;
+        },
+
+      async guardarEdicion() {
+  try {
+    console.log("Enviando datos:", this.usuarioEditando);
+    
+    const res = await fetch(`http://localhost:3000/usuario/${this.usuarioEditando._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usuario: this.usuarioEditando.usuario,
+        correo: this.usuarioEditando.correo,
+        rol: this.usuarioEditando.rol,
+        grado: this.usuarioEditando.grado,
+        materia: this.usuarioEditando.materia
+      })
+    });
+    
+    console.log("Status response:", res.status);
+    const data = await res.json();
+    console.log("Data response:", data);
+    
+    if (data.success) {
+      alert("Usuario actualizado correctamente");
+      this.cerrarModal();
+      this.obtenerUsuarios();
+    } else {
+      alert("Error al actualizar usuario: " + data.message);
+    }
+  } catch (err) {
+    console.error("Error completo:", err);
+    alert("Error al actualizar usuario");
+  }
 },
 
-  methods: {
+        cerrarModal() {
+          this.mostrarModalEditar = false;
+          this.usuarioEditando = null;
+        },
 
-    async cargarPerfil() {
-    try {
-      const res = await fetch(`/usuario/${this.usuarioActual}`);
-      if (!res.ok) throw new Error("No se pudo cargar el perfil");
-      const data = await res.json();
+        logout() {
+          localStorage.removeItem("rolUsuario");
+          window.location.href = "login.html";
+        }
+      },
 
-      this.nombre = data.nombre || data.usuario;
-      this.correo = data.correo || "";
-      this.curso = data.grado || "";
-      this.jornada = data.rol === "estudiante" ? "Mañana" : "";
-    } catch (err) {
-      console.error(err);
-      alert("Error al cargar tu perfil");
-    }
-  },
-    async obtenerUsuarios() {
-      try {
-        const res = await fetch("/usuarios");
-        if (!res.ok) throw new Error("Error al obtener usuarios");
-        this.listaUsuarios = await res.json();
-      } catch (err) {
-        console.error(err);
-        alert("No se pudo cargar la lista de usuarios");
+      mounted() {
+        const usuarioGuardado = localStorage.getItem("usuarioLogueado");
+        if (usuarioGuardado) {
+          const usuario = JSON.parse(usuarioGuardado);
+          this.nombre = usuario.nombre || usuario.usuario;
+          this.correo = usuario.correo || "";
+          this.curso = usuario.grado || "";
+          this.jornada = usuario.rol === "estudiante" ? "Mañana" : "";
+          this.rol = usuario.rol;
+        } else {
+          window.location.href = "login.html";
+        }
+
+        if (this.rol === "administrador") {
+          this.obtenerUsuarios();
+        }
       }
-    },
-    async matricularUsuario() {
-      try {
-        const res = await fetch("/registrar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.nuevoUsuario)
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success) throw new Error(data.message || "Error al registrar usuario");
-        alert(`Usuario ${this.nuevoUsuario.usuario} agregado con rol ${this.nuevoUsuario.rol}`);
-        this.nuevoUsuario = { usuario: "", clave: "", correo: "", rol: "", grado: "", materia: "" };
-        this.obtenerUsuarios();
-      } catch (err) {
-        console.error(err);
-        alert("No se pudo registrar el usuario");
-      }
-    },
-    logout() {
-      localStorage.removeItem("rolUsuario");
-      window.location.href = "login.html";
-    }
-  },
-  mounted() {
- 
-  const usuarioGuardado = localStorage.getItem("usuarioLogueado");
-  if (usuarioGuardado) {
-    const usuario = JSON.parse(usuarioGuardado);
-    this.nombre = usuario.nombre || usuario.usuario;
-    this.correo = usuario.correo || "";
-    this.curso = usuario.grado || "";
-    this.jornada = usuario.rol === "estudiante" ? "Mañana" : "";
-    this.rol = usuario.rol;
-  } else {
-    window.location.href = "login.html";
-  }
-
-  if (this.rol === "administrador") {
-    this.obtenerUsuarios();
-  }
-}
-}).mount("#app");
-</script>
+    }).mount("#app");
+  </script>
 </body>
 </html>
