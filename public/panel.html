@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -165,7 +166,8 @@
           </div>
 
           <!-- Modal para editar usuario -->
-          <div class="modal fade" :class="{ show: mostrarModalEditar }" :style="{ display: mostrarModalEditar ? 'block' : 'none' }" tabindex="-1">
+          <div class="modal fade" :class="{ show: mostrarModalEditar }"
+            :style="{ display: mostrarModalEditar ? 'block' : 'none' }" tabindex="-1">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -304,13 +306,13 @@
 
         async eliminarUsuario(usuarioId) {
           if (!confirm("¿Está seguro de que desea eliminar este usuario?")) return;
-          
+
           try {
             const res = await fetch(`http://localhost:3000/usuario/${usuarioId}`, {
               method: "DELETE"
             });
             const data = await res.json();
-            
+
             if (data.success) {
               alert("Usuario eliminado correctamente");
               this.obtenerUsuarios();
@@ -328,38 +330,38 @@
           this.mostrarModalEditar = true;
         },
 
-      async guardarEdicion() {
-  try {
-    console.log("Enviando datos:", this.usuarioEditando);
-    
-    const res = await fetch(`http://localhost:3000/usuario/${this.usuarioEditando._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        usuario: this.usuarioEditando.usuario,
-        correo: this.usuarioEditando.correo,
-        rol: this.usuarioEditando.rol,
-        grado: this.usuarioEditando.grado,
-        materia: this.usuarioEditando.materia
-      })
-    });
-    
-    console.log("Status response:", res.status);
-    const data = await res.json();
-    console.log("Data response:", data);
-    
-    if (data.success) {
-      alert("Usuario actualizado correctamente");
-      this.cerrarModal();
-      this.obtenerUsuarios();
-    } else {
-      alert("Error al actualizar usuario: " + data.message);
-    }
-  } catch (err) {
-    console.error("Error completo:", err);
-    alert("Error al actualizar usuario");
-  }
-},
+        async guardarEdicion() {
+          try {
+            console.log("Enviando datos:", this.usuarioEditando);
+
+            const res = await fetch(`http://localhost:3000/usuario/${this.usuarioEditando._id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                usuario: this.usuarioEditando.usuario,
+                correo: this.usuarioEditando.correo,
+                rol: this.usuarioEditando.rol,
+                grado: this.usuarioEditando.grado,
+                materia: this.usuarioEditando.materia
+              })
+            });
+
+            console.log("Status response:", res.status);
+            const data = await res.json();
+            console.log("Data response:", data);
+
+            if (data.success) {
+              alert("Usuario actualizado correctamente");
+              this.cerrarModal();
+              this.obtenerUsuarios();
+            } else {
+              alert("Error al actualizar usuario: " + data.message);
+            }
+          } catch (err) {
+            console.error("Error completo:", err);
+            alert("Error al actualizar usuario");
+          }
+        },
 
         cerrarModal() {
           this.mostrarModalEditar = false;
@@ -392,4 +394,5 @@
     }).mount("#app");
   </script>
 </body>
+
 </html>

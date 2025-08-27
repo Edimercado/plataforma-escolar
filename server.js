@@ -59,10 +59,10 @@ app.get("/asignaturas/:curso", async (req, res) => {
   try {
     const curso = req.params.curso;
     console.log(`🔍 Buscando asignaturas para curso: ${curso}`);
-    
+
     const asignaturas = await Asignatura.findOne({ curso });
     console.log(`📚 Resultado encontrado:`, asignaturas);
-    
+
     if (asignaturas) {
       console.log(`✅ Enviando ${asignaturas.materias.length} materias`);
       res.json({ success: true, materias: asignaturas.materias });
@@ -140,11 +140,11 @@ app.delete("/usuario/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const usuarioEliminado = await Usuario.findByIdAndDelete(id);
-    
+
     if (!usuarioEliminado) {
       return res.status(404).json({ success: false, message: "Usuario no encontrado" });
     }
-    
+
     res.json({ success: true, message: "Usuario eliminado correctamente" });
   } catch (err) {
     console.error(err);
@@ -157,17 +157,17 @@ app.put("/usuario/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { usuario, correo, rol, grado, materia } = req.body;
-    
+
     const usuarioActualizado = await Usuario.findByIdAndUpdate(
       id,
       { usuario, correo, rol, grado, materia },
       { new: true }
     );
-    
+
     if (!usuarioActualizado) {
       return res.status(404).json({ success: false, message: "Usuario no encontrado" });
     }
-    
+
     res.json({ success: true, message: "Usuario actualizado correctamente", usuario: usuarioActualizado });
   } catch (err) {
     console.error(err);

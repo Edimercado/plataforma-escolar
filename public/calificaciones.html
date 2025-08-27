@@ -15,7 +15,7 @@
 
 <body class="d-flex flex-column min-vh-100">
     <div id="app" class="flex-grow-1 d-flex flex-column">
-        
+
         <!-- HEADER -->
         <header class="bg-danger text-white text-center py-3">
             <h1 class="h3"><i class="bi bi-person-circle me-2"></i>Bienvenido al Panel del Estudiante</h1>
@@ -34,7 +34,8 @@
                         <li class="nav-item"><a class="nav-link" href="panel.html">Panel</a></li>
                         <li class="nav-item"><a class="nav-link" href="asignaturas.html">Asignaturas</a></li>
                         <li class="nav-item"><a class="nav-link" href="asignaciones.html">Asignaciones</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="calificaciones.html">Calificaciones</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="calificaciones.html">Calificaciones</a>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="index.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
@@ -97,15 +98,12 @@
 
             <!-- Botones de navegación -->
             <div class="mb-4">
-                <button 
-                    class="btn me-2" 
+                <button class="btn me-2"
                     :class="seccionActiva === 'calificaciones' ? 'btn-danger' : 'btn-outline-danger'"
                     @click="seccionActiva = 'calificaciones'">
                     <i class="bi bi-file-earmark-text me-1"></i> Ver Calificaciones
                 </button>
-                <button 
-                    class="btn" 
-                    :class="seccionActiva === 'asistencias' ? 'btn-danger' : 'btn-outline-danger'"
+                <button class="btn" :class="seccionActiva === 'asistencias' ? 'btn-danger' : 'btn-outline-danger'"
                     @click="seccionActiva = 'asistencias'">
                     <i class="bi bi-clock-history me-1"></i> Ver Asistencias
                 </button>
@@ -173,13 +171,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div v-for="nota in calificacionesPeriodo" :key="nota.materia" class="col-md-6 col-lg-4 mb-3">
+                                    <div v-for="nota in calificacionesPeriodo" :key="nota.materia"
+                                        class="col-md-6 col-lg-4 mb-3">
                                         <div class="text-center">
                                             <small class="d-block mb-1">{{ nota.materia }}</small>
                                             <div class="progress" style="height: 20px;">
-                                                <div 
-                                                    class="progress-bar" 
-                                                    :class="getProgressClass(nota.nota)"
+                                                <div class="progress-bar" :class="getProgressClass(nota.nota)"
                                                     :style="{ width: (nota.nota * 20) + '%' }">
                                                     {{ nota.nota }}
                                                 </div>
@@ -211,9 +208,11 @@
                         <thead class="table-secondary">
                             <tr>
                                 <th><i class="bi bi-book me-1"></i>Asignatura</th>
-                                <th class="text-center"><i class="bi bi-check-circle text-success me-1"></i>Asistencias</th>
+                                <th class="text-center"><i class="bi bi-check-circle text-success me-1"></i>Asistencias
+                                </th>
                                 <th class="text-center"><i class="bi bi-x-circle text-danger me-1"></i>Fallas</th>
-                                <th class="text-center"><i class="bi bi-info-circle text-warning me-1"></i>Justificadas</th>
+                                <th class="text-center"><i class="bi bi-info-circle text-warning me-1"></i>Justificadas
+                                </th>
                                 <th class="text-center">% Asistencia</th>
                             </tr>
                         </thead>
@@ -414,7 +413,7 @@
                 async cargarDatosUsuario() {
                     try {
                         const usuarioData = localStorage.getItem('usuarioLogueado');
-                        
+
                         if (!usuarioData) {
                             this.error = "No hay sesión activa. Redirigiendo al login...";
                             setTimeout(() => {
@@ -424,7 +423,7 @@
                         }
 
                         this.usuario = JSON.parse(usuarioData);
-                        
+
                         if (this.usuario.rol !== 'estudiante') {
                             this.error = "Usuario no válido para ver calificaciones.";
                             return;
@@ -491,4 +490,5 @@
         }).mount("#app");
     </script>
 </body>
+
 </html>

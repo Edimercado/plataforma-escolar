@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -26,11 +25,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
         <a class="navbar-brand" href="#">Menú</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -211,7 +206,7 @@
         async cargarDatosUsuario() {
           try {
             const usuarioData = localStorage.getItem('usuarioLogueado');
-            
+
             if (!usuarioData) {
               this.error = "No hay sesión activa. Redirigiendo al login...";
               setTimeout(() => {
@@ -221,7 +216,7 @@
             }
 
             this.usuario = JSON.parse(usuarioData);
-            
+
             if (this.usuario.rol !== 'estudiante') {
               this.error = "Usuario no válido para ver asignaciones.";
               return;
@@ -316,4 +311,5 @@
   </script>
 
 </body>
+
 </html>
