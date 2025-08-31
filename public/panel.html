@@ -295,7 +295,7 @@
             });
             const data = await res.json();
             if (!res.ok || !data.success) throw new Error(data.message || "Error al registrar usuario");
-            alert(`Usuario ${this.nuevoUsuario.usuario} agregado con rol ${this.nuevoUsuario.rol}`);
+            alert(`Usuario  agregado exitosamente`);
             this.nuevoUsuario = { usuario: "", clave: "", correo: "", rol: "", grado: "", materia: "" };
             this.obtenerUsuarios();
           } catch (err) {
