@@ -1,0 +1,59 @@
+{
+	"info": {
+		"_postman_id": "a66ace8d-25ea-42cf-9279-f22c79186251",
+		"name": "pruebas plataformas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47773028",
+		"_collection_link": "https://edimercado07-6834832.postman.co/workspace/edi's-Workspace~e473c0b9-4a1f-41b8-89ce-99a556c673c6/collection/47773028-a66ace8d-25ea-42cf-9279-f22c79186251?action=share&source=collection_link&creator=47773028"
+	},
+	"item": [
+		{
+			"name": "prueba login usuario",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuario\": \"juan\",\r\n  \"clave\": \"12345\",\r\n  \"rol\": \"estudiante\"\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/login?",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prueba al registro",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
